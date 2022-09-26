@@ -1,4 +1,4 @@
-import { Item, GildedRose } from '@/gilded-rose';
+import { Item, GildedRose } from '@/gilded-rose-refactored';
 
 describe('Update quality', () => {
   describe('Normal Item', () => {
