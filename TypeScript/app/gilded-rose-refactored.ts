@@ -10,6 +10,84 @@ export class Item {
   }
 }
 
+export class CustomItem extends Item{
+  constructor (name: string,sellIn: number, quality: number) {
+    super(name, sellIn, quality);
+  }
+  
+  updateQuality() {
+    if (this.quality > 0) {
+      if (this.sellIn < 1 && this.quality > 1) {
+         this.quality -= 2;
+      } else {
+        this.quality -= 1;
+       }
+    }
+    this.sellIn = this.sellIn - 1;
+    return new Item(this.name, this.sellIn, this.quality);
+  }
+}
+
+export class AgedBrie extends Item{
+  constructor (name: string,sellIn: number, quality: number) {
+    super(name, sellIn, quality);
+  }
+
+  updateQuality() {
+    if (this.quality < 50) {
+      this.quality = this.quality + 1;
+    }
+    this.sellIn = this.sellIn - 1;
+    return new Item(this.name,this.sellIn,this.quality);
+  }
+}
+
+export class BackstageItem extends Item{
+  constructor (name: string,sellIn: number, quality: number) {
+    super(name, sellIn, quality);
+  }
+
+  updateQuality() {
+    if (this.quality < 50) {
+      if (this.sellIn < 0) {
+        this.quality = this.quality - this.quality;
+      } else if (this.sellIn < 6) {
+        this.quality = this.quality + 3;
+      } else if (this.sellIn < 11) {
+        this.quality = this.quality + 2;
+      } else {
+        this.quality = this.quality + 1;
+      }
+      this.sellIn = this.sellIn - 1;
+    }
+    return new Item(this.name,this.sellIn,this.quality);
+  }
+}
+
+export class ConjuredItem extends Item{
+  constructor (name: string,sellIn: number, quality: number) {
+    super(name, sellIn, quality);
+  }
+
+  updateQuality() {
+    if (this.quality > 0) {
+       this.quality = this.quality - 2;
+    }
+    this.sellIn = this.sellIn - 1;
+    return new Item(this.name,this.sellIn,this.quality);
+  }
+}
+
+export class LegendaryItem extends Item{
+  constructor (name: string,sellIn: number, quality: number) {
+    super(name, sellIn, quality);
+  }
+
+  updateQuality() {
+    return new Item(this.name,this.sellIn,this.quality);
+  }
+}
+
 export class GildedRose {
   items: Array<Item>;
 
@@ -17,77 +95,26 @@ export class GildedRose {
     this.items = items;
   }
 
-  // Normal Items
-  updateCustomItemQuality(item: Item) {
-    if (item.quality > 0) {
-      if (item.sellIn < 1 && item.quality > 1) {
-         item.quality -= 2;
-      } else {
-        item.quality -= 1;
-       }
-    }
-    item.sellIn = item.sellIn - 1;
-    return item;
-  }
-
-  //Aged brie items
-  updateAgedBrieQuality(item: Item) {
-    if (item.quality < 50) {
-      item.quality = item.quality + 1;
-    }
-    item.sellIn = item.sellIn - 1;
-    return item;
-  }
-
-  //Backstage Items
-  updateBackstageQuality(item: Item) {
-    if (item.quality < 50) {
-      if (item.sellIn < 0) {
-        item.quality = item.quality - item.quality;
-      } else if (item.sellIn < 6) {
-        item.quality = item.quality + 3;
-      } else if (item.sellIn < 11) {
-        item.quality = item.quality + 2;
-      } else {
-        item.quality = item.quality + 1;
-      }
-      item.sellIn = item.sellIn - 1;
-    }
-    return item;
-  }
-
-  //Sulfuras (Legendary items)
-  updateLegendaryItemQuality(item: Item) {
-    return item;
-  }
-
-  //New feature - Conjured Items
-  updateConjuredItemQuality(item: Item) {
-    if (item.quality > 0) {
-       item.quality = item.quality - 2;
-    }
-    item.sellIn = item.sellIn - 1;
-    return item;
-  }
-
   updateQuality() {
     for (let i = 0; i < this.items.length; i++) {
       let name = this.items[i].name;
+      let sellIn = this.items[i].sellIn;
+      let quality = this.items[i].quality;
       switch (name) {
         case 'Aged Brie':
-          this.items[i] = this.updateAgedBrieQuality(this.items[i]);
+          this.items[i] = new AgedBrie(name, sellIn, quality).updateQuality();
           break;
         case 'Backstage passes to a TAFKAL80ETC concert':
-          this.items[i] = this.updateBackstageQuality(this.items[i]);
+          this.items[i] = new BackstageItem(name, sellIn, quality).updateQuality();
           break;
         case 'Sulfuras, Hand of Ragnaros':
-          this.items[i] = this.updateLegendaryItemQuality(this.items[i]);
+          this.items[i] =  new LegendaryItem(name, sellIn, quality).updateQuality();
           break;
         case 'Conjured Items':
-          this.items[i] = this.updateConjuredItemQuality(this.items[i]);
+          this.items[i] = new ConjuredItem(name, sellIn, quality).updateQuality();
           break;
         default:
-          this.items[i] = this.updateCustomItemQuality(this.items[i]);
+          this.items[i] = new CustomItem(name, sellIn, quality).updateQuality();
       }
     }
     return this.items;
